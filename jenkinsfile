@@ -34,6 +34,8 @@ pipeline {
                sh '''
                    sudo docker build -t grafana_image /home/ubuntu/grafana-server/.
                    sudo docker run -itd -p 3000:3000 --name grafana_container grafana_image
+                   sudo docker exec -it 9cea /etc/init.d/grafana-server restart
+                   sudo docker exec -it 9cea /etc/init.d/grafana-server start
                   '''
             }
         }
@@ -46,5 +48,17 @@ pipeline {
                    '''
             }
         }
+        
+        stage("Checking container status ") {
+            steps {
+               sh '''
+                   sudo docker ps
+                   curl localhost:9090
+                   curl localhost:9100
+                   curl localhost:9093
+                   curl localhost:3000
+                   '''
+             }
+         }
     } 
 }
